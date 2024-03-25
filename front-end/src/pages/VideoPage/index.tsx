@@ -3,11 +3,7 @@ import { Header } from '../../components/Header/index';
 
 import { useParams } from 'react-router-dom';
 
-interface VideoPageProps {
-  mainVideo: string; // Define the type of the "mainVideo" prop
-}
-
-const VideoPage: React.FC<VideoPageProps> = () => {
+const VideoPage = () => {
   const { mainVideo } = useParams();
 
   return (

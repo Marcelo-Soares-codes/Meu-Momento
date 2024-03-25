@@ -20,31 +20,32 @@ import { sendRecoverPassword } from "../services/nodemailer/recoverPassword.serv
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    email.toLowerCase();
 
-    // Verificar se o usuário realmente existe
+    // Check if the user really exists
     const user = await getByEmail(email);
     if (!user) {
-      throw new Error("Email ou senha inválidos");
+      throw new Error("Invalid email or password");
     }
 
-    // Verificar se a senha está correta
+    // Check if the password is correct
     const verifyPass = await bcrypt.compare(password, user.password);
     if (!verifyPass) {
-      throw new Error("Email ou senha inválidos");
+      throw new Error("Invalid email or password");
     }
 
-    // Remover a senha do usuário antes de enviar
+    // Remove the password from the user before sending
     const { password: _, ...userLogin } = user;
 
-    // Gerar token JWT
+    // Generate JWT token
     const token = jwt.sign({ data: userLogin }, process.env.JWT_PASS ?? "", {
       expiresIn: "8h",
     });
 
-    // Responder com sucesso e enviar os dados do usuário e o token JWT
+    // Respond with success and send user data and JWT token
     res.status(200).json({ success: true, data: { user: userLogin, token } });
   } catch (error) {
-    handleError(error, res, "Erro ao fazer login");
+    handleError(error, res, "Error logging in");
   }
 };
 
@@ -52,73 +53,74 @@ export const getProfile = async (req: Request, res: Response) => {
   try {
     const { authorization } = req.headers;
 
-    // Verificar se o cabeçalho de autorização está presente
+    // Check if authorization header is present
     if (!authorization) {
-      throw new Error("Cabeçalho de autorização não encontrado!");
+      throw new Error("Authorization header not found!");
     }
 
-    // Extrair apenas o token do cabeçalho de autorização
+    // Extract only the token from the authorization header
     const token = authorization.split(" ")[1];
 
-    // Verificar se o token é válido
+    // Check if the token is valid
     const decodedToken = jwt.verify(token, process.env.JWT_PASS ?? "") as {
       id: string;
     };
 
-    // Obter o ID do usuário do token decodificado
+    // Get user ID from decoded token
     const userId = decodedToken.id;
 
-    // Obter o usuário pelo ID
+    // Get user by ID
     const user = await getById(userId);
 
-    // Verificar se o usuário existe
+    // Check if the user exists
     if (!user) {
-      throw new Error("Usuário não encontrado!");
+      throw new Error("User not found!");
     }
 
-    // Responder com os dados do usuário
+    // Respond with user data
     res.status(200).json({ success: true, data: user });
   } catch (error) {
-    handleError(error, res, "Erro ao obter perfil do usuário");
+    handleError(error, res, "Error getting user profile");
   }
 };
 
 export const create = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    email.toLowerCase();
 
-    // Verificar se o e-mail fornecido é válido
+    // Check if the provided email is valid
     if (!validate(email)) {
-      throw new Error("E-mail inválido!");
+      throw new Error("Invalid email!");
     }
 
-    // Verificar se o usuário já existe
+    // Check if user already exists
     const userExists = await getByEmail(email);
     if (userExists) {
-      throw new Error("Email já existente!");
+      throw new Error("Email already exists!");
     }
 
-    // Validar entrada (por exemplo, formato do email, força da senha, etc.)
+    // Validate input (e.g., email format, password strength, etc.)
     await userValidation.validate(req.body);
 
-    // Hash da senha
+    // Password hash
     const hashPassword = await bcrypt.hash(password, 10);
     req.body.password = hashPassword;
 
-    // Criar o usuário
+    // Create the user
     //const newUser = await createUser(req.body);
 
-    // Gerar token JWT
+    // Generate JWT token
     const token = jwt.sign({ user: req.body }, process.env.JWT_PASS ?? "", {
       expiresIn: "10m",
     });
 
     await sendConfirmationEmail(email, token);
 
-    // Retornar sucesso e dados do novo usuário
+    // Return success and new user data
     res.status(201).json({ success: true, token });
   } catch (error) {
-    handleError(error, res, "Erro ao criar usuário");
+    handleError(error, res, "Error creating user");
   }
 };
 
@@ -126,75 +128,76 @@ export const confirmCreate = async (req: Request, res: Response) => {
   try {
     const { authorization } = req.headers;
 
-    // Verificar se o cabeçalho de autorização está presente
+    // Check if authorization header is present
     if (!authorization) {
-      throw new Error("Cabeçalho de autorização não encontrado!");
+      throw new Error("Authorization header not found!");
     }
 
-    // Extrair apenas o token do cabeçalho de autorização
+    // Extract only the token from the authorization header
     const token = authorization.split(" ")[1];
 
-    // Verificar se o token é válido
+    // Check if the token is valid
     const decodedToken = jwt.verify(token, process.env.JWT_PASS ?? "") as {
       user: UserDTO;
     };
 
     const { user } = decodedToken;
 
-    // Verificar se o e-mail fornecido é válido
+    // Check if the provided email is valid
     if (!validate(user.email)) {
-      throw new Error("E-mail inválido!");
+      throw new Error("Invalid email!");
     }
 
-    // Verificar se o usuário já existe
+    // Check if user already exists
     const userExists = await getByEmail(user.email);
     if (userExists) {
-      throw new Error("Email já existente!");
+      throw new Error("Email already exists!");
     }
 
     const newUser = await createUser(user);
 
     res.status(201).json({ success: true, user: newUser });
   } catch (error) {
-    handleError(error, res, "Erro ao confirmar criação de usuário");
+    handleError(error, res, "Error confirming user creation");
   }
 };
 
 export const recoverPassword = async (req: Request, res: Response) => {
   try {
     const { email, newPassword } = req.body;
+    email.toLowerCase();
 
-    // Verificar se o e-mail fornecido é válido
+    // Check if the provided email is valid
     if (!validate(email)) {
-      throw new Error("E-mail inválido!");
+      throw new Error("Invalid email!");
     }
 
-    // Verificar se o usuário existe
+    // Check if the user exists
     const user = await getByEmail(email);
     if (!user) {
-      throw new Error("E-mail não encontrado!");
+      throw new Error("Email not found!");
     }
 
-    // Hash da nova senha
+    // Hash of the new password
     const hashPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashPassword;
 
-    // Gerar token JWT
+    // Generate JWT token
     const token = jwt.sign({ user }, process.env.JWT_PASS ?? "", {
-      expiresIn: "10m", // Defina o tempo de expiração do token
+      expiresIn: "10m", // Set token expiration time
     });
 
-    // Enviar e-mail de recuperação de senha
+    // Send password recovery email
     await sendRecoverPassword(email, token);
 
-    // Responder ao cliente
+    // Respond to client
     res.status(201).json({
       success: true,
       message:
-        "Senha recuperada com sucesso. Verifique seu e-mail para mais instruções.",
+        "Password successfully recovered. Check your email for further instructions.",
     });
   } catch (error) {
-    handleError(error, res, "Erro ao confirmar criação de usuário");
+    handleError(error, res, "Error confirming user creation");
   }
 };
 
@@ -202,37 +205,38 @@ export const confirmRecoverPassword = async (req: Request, res: Response) => {
   try {
     const { authorization } = req.headers;
 
-    // Verificar se o cabeçalho de autorização está presente
+    // Check if authorization header is present
     if (!authorization) {
-      throw new Error("Cabeçalho de autorização não encontrado!");
+      throw new Error("Authorization header not found!");
     }
 
-    // Extrair apenas o token do cabeçalho de autorização
+    // Extract only the token from the authorization header
     const token = authorization.split(" ")[1];
 
-    // Verificar se o token é válido
+    // Check if the token is valid
     const decodedToken = jwt.verify(token, process.env.JWT_PASS ?? "") as {
       user: { email: string; password: string };
     };
     const { email, password } = decodedToken.user;
+    email.toLowerCase();
 
-    // Verificar se o e-mail fornecido é válido
+    // Check if the provided email is valid
     if (!validate(email)) {
-      throw new Error("E-mail inválido!");
+      throw new Error("Invalid email!");
     }
 
-    // Verificar se o usuário existe
+    // Check if the user exists
     const userExists = await getByEmail(email);
     if (!userExists) {
-      throw new Error("Usuário não encontrado");
+      throw new Error("User not found");
     }
 
-    // Atualizar a senha do usuário
+    // Update user password
     const updatedUser = await updatedPassword(email, password);
 
     res.status(200).json({ success: true, user: updatedUser });
   } catch (error) {
-    handleError(error, res, "Erro ao confirmar recuperação de senha");
+    handleError(error, res, "Error confirming password recovery");
   }
 };
 
@@ -255,14 +259,14 @@ export const getId = async (req: Request, res: Response) => {
 
     // Se o usuário não for encontrado, retorne um erro 404
     if (!user) {
-      res.status(404).json({ success: false, error: "Usuário não encontrado" });
+      res.status(404).json({ success: false, error: "User not found" });
       return;
     }
 
     // Responder com o usuário obtido
     res.status(200).json({ success: true, data: user });
   } catch (error) {
-    handleError(error, res, "Erro ao obter usuário");
+    handleError(error, res, "Error getting user");
   }
 };
 
@@ -273,21 +277,21 @@ export const deleteId = async (req: Request, res: Response) => {
 
     // Se o usuário não for encontrado, retorne um erro 404
     if (!deleted) {
-      res.status(404).json({ success: false, error: "Usuário não encontrado" });
+      res.status(404).json({ success: false, error: "User not found" });
       return;
     }
 
     // Responder com o usuário obtido
     res.status(200).json({ success: true, message });
   } catch (error) {
-    handleError(error, res, "Erro ao deletar usuário");
+    handleError(error, res, "Error deleting user");
   }
 };
 
 const handleError = (error: any, res: Response, errorMessage: string) => {
   // Definindo o código de status (Bad Request) e criando menssagem padrão
   const status = 400;
-  const defaultMessage = "Erro desconhecido";
+  const defaultMessage = "Unknown error";
 
   // Montando a mensagem de erro para o console
   const errorMessageToLog = `${errorMessage}: ${error.message}`;

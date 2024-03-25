@@ -14,7 +14,7 @@ export const VideosList = () => {
   }, []);
 
   return (
-    <section className="bg-grey mt-14 flex justify-center">
+    <section className="bg-gray mt-14 flex justify-center">
       {videos.length > 0 && (
         <ul className="mx-8 md:grid md:grid-cols-3 md:gap-6 w-5/6">
           {videos.map((video) => (

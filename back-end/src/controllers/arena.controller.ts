@@ -16,92 +16,94 @@ import { arenaValidation } from "../validations/arena.validation";
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    email.toLowerCase();
 
-    // Verificar se a arena realmente existe
+    // Check if the arena really exists
     const arena = await getByEmail(email);
     if (!arena) {
-      throw new Error("Email ou senha inválidos");
+      throw new Error("Invalid email or password");
     }
 
-    // Verificar se a senha está correta
+    // Check if the password is correct
     const verifyPass = await bcrypt.compare(password, arena.password);
     if (!verifyPass) {
-      throw new Error("Email ou senha inválidos");
+      throw new Error("Invalid email or password");
     }
 
-    // Remover a senha da arena antes de enviar
+    // Remove the password from the arena before sending
     const { password: _, ...arenaLogin } = arena;
 
-    // Gerar token JWT
+    // Generate JWT token
     const token = jwt.sign({ data: arenaLogin }, process.env.JWT_PASS ?? "", {
       expiresIn: "8h",
     });
 
-    // Responder com sucesso e enviar os dados da arena e o token JWT
+    // Respond with success and send arena data and JWT token
     res.status(200).json({ success: true, data: { arena: arenaLogin, token } });
   } catch (error) {
-    handleError(error, res, "Erro ao realizar o login");
+    handleError(error, res, "Error while logging in");
   }
 };
 
 export const create = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
+    email.toLowerCase();
 
-    // Verificar se o Arena ja existe
+    // Check if the arena already exists
     const arenaExistent = await getByEmail(email);
     if (arenaExistent) {
-      throw new Error("Email já existente!");
+      throw new Error("Email already exists!");
     }
     const arenaByName = await getByName(name);
     if (arenaByName) {
-      throw new Error("Parece que esse nome ja esta sendo usado!");
+      throw new Error("It seems that this name is already being used!");
     }
 
-    // Validar entrada de dados da arena
+    // Validate arena data input
     await arenaValidation.validate(req.body);
 
-    // Hash da senha
+    // Password hash
     const hashPassword = await bcrypt.hash(password, 10);
     req.body.password = hashPassword;
 
-    // Criar a arena
+    // Create arena
     const newArena = await createArena(req.body);
 
-    // Retornar sucesso e dados da nova arena
+    // Return success and new arena data
     res.status(201).json({ success: true, data: newArena });
   } catch (error) {
-    handleError(error, res, "Erro ao criar a arena");
+    handleError(error, res, "Error creating arena");
   }
 };
 
 export const getAll = async (_req: Request, res: Response) => {
   try {
-    // Obter todos os arenas
+    // Get all arenas
     const arena = await getAllArenas();
 
-    // Responder com os arenas obtidos
+    // Respond with obtained arenas
     res.status(200).json({ success: true, data: arena });
   } catch (error) {
-    handleError(error, res, "Erro ao obter Arenas");
+    handleError(error, res, "Error getting Arenas");
   }
 };
 
 export const getId = async (req: Request, res: Response) => {
   try {
-    // Obter a arena pelo ID
+    // Get arena by ID
     const arena = await getById(req.params.id);
 
-    // Se a arena não for encontrada, retorne um erro 404
+    // If arena is not found, return a 404 error
     if (!arena) {
-      res.status(404).json({ success: false, error: "Arena não encontrado" });
+      res.status(404).json({ success: false, error: "Arena not found" });
       return;
     }
 
-    // Responder com a arena obtida
+    // Respond with obtained arena
     res.status(200).json({ success: true, data: arena });
   } catch (error) {
-    handleError(error, res, "Erro ao obter Arena");
+    handleError(error, res, "Error getting Arena");
   }
 };
 
@@ -111,50 +113,50 @@ export const addVideo = async (req: Request, res: Response) => {
     const videoBytes = req.file?.buffer;
 
     if (!videoBytes) {
-      throw new Error("Arquivo de vídeo não encontrado");
+      throw new Error("Video file not found");
     }
 
     const newVideo = { title, file: videoBytes };
 
     addVideoToArena(arenaId, newVideo);
 
-    // Retornar sucesso e dados do novo vídeo
+    // Return success and new video data
     res.status(201).json({ success: true, data: newVideo });
   } catch (error) {
-    handleError(error, res, "Erro ao adicionar vídeo à arena");
+    handleError(error, res, "Error adding video to arena");
   }
 };
 
 export const deleteId = async (req: Request, res: Response) => {
   try {
-    // Obter a arena pelo ID
+    // Get arena by ID
     const { deleted, message } = await deleteById(req.params.id);
 
-    // Se a arena não for encontrada, retorne um erro 404
+    // If arena is not found, return a 404 error
     if (!deleted) {
-      res.status(404).json({ success: false, error: "Arena não encontrada" });
+      res.status(404).json({ success: false, error: "Arena not found" });
       return;
     }
 
-    // Responder com a arena obtida
+    // Respond with obtained arena
     res.status(200).json({ success: true, message });
   } catch (error) {
-    handleError(error, res, "Erro ao deletar Arena");
+    handleError(error, res, "Error deleting Arena");
   }
 };
 
 const handleError = (error: any, res: Response, errorMessage: string) => {
-  // Definindo o código de status (Bad Request) e criando menssagem padrão
+  // Setting status code (Bad Request) and creating default message
   const status = 400;
-  const defaultMessage = "Erro desconhecido";
+  const defaultMessage = "Unknown error";
 
-  // Montando a mensagem de erro para o console
+  // Building error message for console
   const errorMessageToLog = `${errorMessage}: ${error.message}`;
-  // Determinando a mensagem de erro a ser enviada ao cliente com base no tipo de erro
+  // Determining error message to be sent to client based on error type
   const errorMessageToSend =
     error instanceof Error ? error.message : defaultMessage;
 
-  // Enviando a resposta de erro para o cliente
+  // Sending error response to client
   console.error(errorMessageToLog);
   res.status(status).json({ success: false, error: errorMessageToSend });
 };

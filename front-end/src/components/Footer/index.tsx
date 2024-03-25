@@ -12,7 +12,7 @@ export const Footer = () => {
       <div className="items-center flex flex-col justify-center order-3 md:order-3 ">
         <h3 className="text-1xl md:text-2xl">PAGINAS:</h3>
 
-        <ul className="text-center text-grey m-2 text-sm md:text-base">
+        <ul className="text-center text-gray m-2 text-sm md:text-base">
           <li className="hover:text-white cursor-pointer transition duration-300 ease-in-out">
             <FontAwesomeIcon icon={faHome} /> Home
           </li>

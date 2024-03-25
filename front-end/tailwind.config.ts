@@ -9,10 +9,11 @@ module.exports = {
       xl: '1440px',
     },
     colors: {
+      error: '#EF665B',
       greenWeak: '#2BA84A',
       green: '#248232',
       greenDark: '#040F0F',
-      grey: '#2D3A3A',
+      gray: '#2D3A3A',
       white: '#FCFFFC',
       black: '#000',
       red: 'red',
