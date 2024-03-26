@@ -8,9 +8,10 @@ import PopupError from '../../components/PopupError';
 import { AuthContext } from '../../context/auth';
 
 function Login() {
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ message: string; id: number }[]>([]);
   const { login, logged } = useContext(AuthContext);
 

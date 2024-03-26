@@ -11,6 +11,7 @@ import {
   login,
   recoverPassword,
 } from "../controllers/user.controller";
+import { authenticateToken } from "../services/middlewares/auth.middleware";
 
 const userRoutes = (app: Express) => {
   app.post("/user/create", create);
