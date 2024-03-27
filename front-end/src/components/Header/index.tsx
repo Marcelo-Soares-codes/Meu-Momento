@@ -1,6 +1,6 @@
 export const Header = () => {
   return (
-    <header className=" w-full h-32 sm:h-24 bg-green text-center flex flex-col sm:flex-row justify-center items-center shadow-md drop-shadow-2xl shadow-greenDark">
+    <header className=" w-full h-32 sm:h-24 bg-green text-center flex flex-col sm:flex-row justify-center items-center shadow-md drop-shadow-sm md:drop-shadow-xl shadow-greenDark">
       <img
         src="./assets/logo-MeuMomento.png"
         alt="MEU MOMENTO"

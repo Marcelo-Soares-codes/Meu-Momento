@@ -4,8 +4,10 @@ import Home from '../pages/Home/index.tsx';
 import Login from '../pages/Login/index.tsx';
 import VideoPage from '../pages/VideoPage/index.tsx';
 import Register from '../pages/Register/index.tsx';
-import { ConfirmCreate } from '../pages/ConfirmCreate/index.tsx';
-import { NotFound } from '../pages/NotFound/index.tsx';
+import ConfirmCreate from '../pages/ConfirmCreate/index.tsx';
+import RecoverPassword from '../pages/RecoverPassword/index.tsx';
+import NotFound from '../pages/NotFound/index.tsx';
+import ConfirmRecoverPassword from '../pages/ConfirmRecoverPassword/index.tsx';
 
 const AppRoutes = () => {
   return (
@@ -14,7 +16,12 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/confirmCreate/:token?" element={<ConfirmCreate />} />
+        <Route path="/confirm-create/:token?" element={<ConfirmCreate />} />
+        <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route
+          path="/confirm-recover-password/:token?"
+          element={<ConfirmRecoverPassword />}
+        />
         <Route path="/video/:mainVideo" element={<VideoPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

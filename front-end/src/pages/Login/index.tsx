@@ -34,7 +34,7 @@ function Login() {
         setErrors([
           {
             message:
-              'Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.',
+              'An error occurred while processing your request. Please try again later.',
             id: 0,
           },
         ]);
@@ -87,13 +87,21 @@ function Login() {
             >
               ENTRAR
             </button>
-
-            <Link
-              to="/register"
-              className="my-10 text-sm text-green hover:text-greenWeak"
-            >
-              Criar uma conta!
-            </Link>
+            <div className="flex flex-col my-4">
+              <Link
+                to="/recover-password"
+                className=" text-sm text-green hover:text-greenWeak"
+              >
+                Esqueceu a senha?
+              </Link>
+              <span className="text-sm text-gray">ou</span>
+              <Link
+                to="/register"
+                className=" text-sm text-green hover:text-greenWeak"
+              >
+                Criar uma conta!
+              </Link>
+            </div>
           </div>
         </div>
       </BackgroundAuth>

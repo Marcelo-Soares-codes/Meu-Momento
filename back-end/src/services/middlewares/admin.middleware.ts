@@ -1,15 +1,26 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { UserDTO } from "../../DTOs/user.dto";
+import { getById } from "../../repositorys/user.repository";
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const isAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Verifica se o usuário está presente na solicitação e se ele tem a propriedade 'id' definida
   if (!req.user || !req.user.id) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
   // Verifica se o ID do usuário corresponde ao ID do administrador (substitua 'adminId' pelo ID real do administrador)
-  if (req.user.id !== "adminId") {
+  const user = await getById(req.user.id);
+
+  // Verifica se o usuário foi encontrado
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Verifica se o usuário possui a função de administrador
+  if (user.role !== "ADMINISTRATOR") {
     return res.status(403).json({ error: "Forbidden" });
   }
 

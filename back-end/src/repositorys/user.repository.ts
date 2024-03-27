@@ -6,7 +6,6 @@ export const createUser = async (data: UserDTO) => {
     data,
     select: {
       id: true,
-      admin: false,
       name: true,
       email: true,
       password: false,
@@ -14,6 +13,7 @@ export const createUser = async (data: UserDTO) => {
       createdAt: true,
       updatedAt: true,
       premium: true,
+      role: true,
     },
   });
   return user;
@@ -23,7 +23,6 @@ export const getAllUsers = async () => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      admin: false,
       name: true,
       email: true,
       password: false,
@@ -31,6 +30,7 @@ export const getAllUsers = async () => {
       createdAt: true,
       updatedAt: true,
       premium: true,
+      role: true,
     },
   });
   return users;
@@ -41,7 +41,6 @@ export const getById = async (id: string) => {
     where: { id },
     select: {
       id: true,
-      admin: false,
       name: true,
       email: true,
       password: false,
@@ -49,6 +48,7 @@ export const getById = async (id: string) => {
       createdAt: true,
       updatedAt: true,
       premium: true,
+      role: true,
     },
   });
   return users;
@@ -59,7 +59,6 @@ export const getByEmail = async (email: string) => {
     where: { email },
     select: {
       id: true,
-      admin: false,
       name: true,
       email: true,
       password: true,
@@ -67,6 +66,7 @@ export const getByEmail = async (email: string) => {
       createdAt: true,
       updatedAt: true,
       premium: true,
+      role: true,
     },
   });
   return users;

@@ -12,7 +12,10 @@ import {
   updatedPassword,
 } from "../repositorys/user.repository";
 
-import { userValidation } from "../validations/user.validation";
+import {
+  recoverPasswordValidation,
+  userValidation,
+} from "../validations/user.validation";
 import { sendConfirmationEmail } from "../services/nodemailer/confirmEmail.service";
 import { UserDTO } from "../DTOs/user.dto";
 import { sendRecoverPassword } from "../services/nodemailer/recoverPassword.service";
@@ -177,6 +180,9 @@ export const recoverPassword = async (req: Request, res: Response) => {
     if (!user) {
       throw new Error("Email not found!");
     }
+
+    //performs data validation
+    await recoverPasswordValidation.validate(req.body);
 
     // Hash of the new password
     const hashPassword = await bcrypt.hash(newPassword, 10);

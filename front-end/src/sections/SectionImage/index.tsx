@@ -19,7 +19,9 @@ export const SectionImage = () => {
           Registre tudo para reviver esses momentos emocionantes sempre que
           quiser!
         </p>
-        {logged ?? (
+        {logged ? (
+          <div className="mt-16"></div>
+        ) : (
           <div className="mt-16">
             <Link
               to="/login"

@@ -38,6 +38,7 @@ function Register() {
   const handleCreate = async () => {
     try {
       setLoading(true);
+      if (password !== confPassword) throw new Error('Passwords do not match');
       const data = {
         name,
         email,
@@ -45,7 +46,7 @@ function Register() {
         password,
       };
       await api.post('/user/create', data);
-      navigate('/confirmCreate');
+      navigate('/confirm-create');
     } catch (error: Error | any) {
       setLoading(false);
       if (error.response && error.response.data.error) {
@@ -54,7 +55,7 @@ function Register() {
         setErrors([
           {
             message:
-              'Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.',
+              'An error occurred while processing your request. Please try again later.',
             id: 0,
           },
         ]);

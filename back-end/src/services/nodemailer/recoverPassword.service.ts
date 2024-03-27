@@ -26,7 +26,7 @@ export const sendRecoverPassword = async (
         <h1 style="color: #040F0F;">Recuperação de senha</h1>
         <p style="color: #2BA84A;">Por favor, clique no link abaixo para recuperar sua senha:</p>
         <p style="color: #2BA84A;">Token: ${confirmationToken}</p>
-        <a href="http://${process.env.HOST}.com/recoverPassword?token=${confirmationToken}" style="margin: auto; background-color: #248232; color: #FCFFFC; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirmar E-mail</a>
+        <a href="${process.env.URL_FRONTEND}/confirm-recover-password/${confirmationToken}" style="margin: auto; background-color: #248232; color: #FCFFFC; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirmar E-mail</a>
       </div>
     `;
 
@@ -40,8 +40,6 @@ export const sendRecoverPassword = async (
 
     // Enviar e-mail
     await transporter.sendMail(mailOptions);
-
-    console.log("E-mail de recuperação enviado com sucesso!");
   } catch (error) {
     console.error("Erro ao enviar e-mail de recuperação:", error);
     throw new Error("Erro ao enviar e-mail de recuperação");

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import Error400 from '../Error400/index';
 
-const ConfirmCreate = () => {
+const ConfirmRecoverPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null); // Ajuste o tipo para 'any' ou 'Error'
@@ -36,7 +36,7 @@ const ConfirmCreate = () => {
         <h1 className="text-3xl">Confirme seu email!</h1>
         <p className="text-md font-sans my-5">
           Por favor, verifique o seu email e siga as instruções que enviamos
-          para concluir o processo de criação da sua conta. Se você não receber
+          para continuar o processo de recuperação de senha. Se você não receber
           o email dentro de alguns minutos, verifique sua caixa de spam ou tente
           novamente mais tarde.
         </p>
@@ -51,4 +51,4 @@ const ConfirmCreate = () => {
   );
 };
 
-export default ConfirmCreate;
+export default ConfirmRecoverPassword;

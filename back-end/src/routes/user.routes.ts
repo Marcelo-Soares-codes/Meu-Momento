@@ -12,19 +12,20 @@ import {
   recoverPassword,
 } from "../controllers/user.controller";
 import { authenticateToken } from "../services/middlewares/auth.middleware";
+import { isAdmin } from "../services/middlewares/admin.middleware";
 
 const userRoutes = (app: Express) => {
   app.post("/user/create", create);
   app.post("/user/confirm", confirmCreate);
   app.post("/user/login", login);
-  app.post("/user/recoverPassword", recoverPassword);
-  app.post("/user/confirmRecoverPassword", confirmRecoverPassword);
+  app.post("/user/recover-password", recoverPassword);
+  app.post("/user/confirm-recover-password", confirmRecoverPassword);
 
-  app.get("/users", getAll);
-  app.get("/user/:id", getId);
-  app.get("/user/profile", getProfile);
+  app.get("/users", authenticateToken, isAdmin, getAll);
+  app.get("/user/:id", authenticateToken, isAdmin, getId);
+  app.get("/user/profile", authenticateToken, getProfile);
 
-  app.delete("/user/delete/:id", deleteId);
+  app.delete("/user/delete/:id", authenticateToken, isAdmin, deleteId);
 };
 
 export default userRoutes;
