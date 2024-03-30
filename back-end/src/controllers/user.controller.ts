@@ -10,6 +10,7 @@ import {
   getByEmail,
   getById,
   updatedPassword,
+  updateInfo,
 } from "../repositorys/user.repository";
 
 import {
@@ -273,6 +274,41 @@ export const getId = async (req: Request, res: Response) => {
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     handleError(error, res, "Error getting user");
+  }
+};
+
+export const updateInfoUser = async (req: Request, res: Response) => {
+  try {
+    const { id, name: newName, ...restData } = req.body;
+
+    // Obter o usuário existente pelo ID
+    const currentUser = await getById(id);
+
+    if (!currentUser) {
+      throw new Error("User not found");
+    }
+
+    // Verificar se o novo nome é diferente do nome atual do usuário
+    if (newName && newName !== currentUser.name) {
+      // Verificar se o novo nome já está em uso
+      const existingUserWithName = await getByEmail(newName);
+      if (existingUserWithName && existingUserWithName.id !== id) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Username is already in use." });
+      }
+    }
+
+    // Atualizar as informações do usuário
+    const updatedUser = await updateInfo({
+      id,
+      name: newName,
+      ...restData,
+    });
+
+    res.status(200).json({ success: true, data: updatedUser });
+  } catch (error) {
+    handleError(error, res, "error when saving new information");
   }
 };
 

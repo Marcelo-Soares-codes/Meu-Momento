@@ -6,6 +6,7 @@ export const createUser = async (data: UserDTO) => {
     data,
     select: {
       id: true,
+      profileImage: true,
       name: true,
       email: true,
       password: false,
@@ -23,6 +24,7 @@ export const getAllUsers = async () => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
+      profileImage: true,
       name: true,
       email: true,
       password: false,
@@ -41,6 +43,7 @@ export const getById = async (id: string) => {
     where: { id },
     select: {
       id: true,
+      profileImage: true,
       name: true,
       email: true,
       password: false,
@@ -59,6 +62,7 @@ export const getByEmail = async (email: string) => {
     where: { email },
     select: {
       id: true,
+      profileImage: true,
       name: true,
       email: true,
       password: true,
@@ -79,6 +83,20 @@ export const updatedPassword = async (email: string, password: string) => {
   });
 
   return newUser;
+};
+
+export const updateInfo = async (data: {
+  id: string;
+  name?: string;
+  phone?: string;
+  imageProfile?: string;
+}) => {
+  const { id, ...newData } = data;
+  const user = await prisma.user.update({
+    where: { id },
+    data: newData,
+  });
+  return user;
 };
 
 export const deleteById = async (id: string) => {

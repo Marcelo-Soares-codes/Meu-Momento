@@ -8,6 +8,7 @@ import ConfirmCreate from '../pages/ConfirmCreate/index.tsx';
 import RecoverPassword from '../pages/RecoverPassword/index.tsx';
 import NotFound from '../pages/NotFound/index.tsx';
 import ConfirmRecoverPassword from '../pages/ConfirmRecoverPassword/index.tsx';
+import UserProfile from '../pages/UserProfile/index.tsx';
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
           path="/confirm-recover-password/:token?"
           element={<ConfirmRecoverPassword />}
         />
+        <Route path="/user/profile" element={<UserProfile />} />
         <Route path="/video/:mainVideo" element={<VideoPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

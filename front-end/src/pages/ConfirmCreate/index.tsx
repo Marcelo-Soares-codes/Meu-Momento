@@ -12,7 +12,7 @@ const ConfirmCreate = () => {
     const handleVerifyToken = async () => {
       if (token) {
         try {
-          await api.post('/user/confirm-recover-password', null, {
+          await api.post('/user/confirm', null, {
             headers: {
               Authorization: `Bearer ${token}`, // Enviar o token no cabeçalho de autorização
             },
@@ -34,7 +34,7 @@ const ConfirmCreate = () => {
     <main>
       <div className="text-center mt-14">
         <h1 className="text-3xl">Confirme seu email!</h1>
-        <p className="text-md font-sans my-5">
+        <p className="max-w-144 text-center text-md font-sans my-5 mx-auto">
           Por favor, verifique o seu email e siga as instruções que enviamos
           para concluir o processo de criação da sua conta. Se você não receber
           o email dentro de alguns minutos, verifique sua caixa de spam ou tente

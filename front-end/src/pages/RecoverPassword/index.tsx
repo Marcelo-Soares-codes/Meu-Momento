@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { InputAuth } from '../../components/InputAuth';
@@ -6,13 +6,16 @@ import Loading from '../../components/Loading';
 import PopupError from '../../components/PopupError';
 import { Header } from '../../components/Header';
 import { api } from '../../services/api';
+import { AuthContext } from '../../context/auth';
 
 function RecoverPassword() {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newConfirmPassword, setNewConfirmPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ message: string; id: number }[]>([]);
+  const { logged, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +25,16 @@ function RecoverPassword() {
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
   };
+  const handleNewConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setNewConfirmPassword(e.target.value);
+  };
 
   const handleSend = async () => {
     try {
+      if (newPassword !== newConfirmPassword)
+        throw Error('Passwords do not match!');
       setLoading(true);
       await api.post('/user/recover-password', {
         email,
@@ -63,19 +73,36 @@ function RecoverPassword() {
       <div className="flex flex-col justify-center items-center mt-28">
         <h1 className=" text-center text-3xl md:text-4xl">RECUPERAR SENHA</h1>
         <div className="flex flex-col w-4/5 max-w-128 sm:w-3/5 md:w-2/5 mx-auto mt-14 items-center">
-          <InputAuth
-            type="email"
-            name="Email"
-            value={email}
-            required={true}
-            onChange={handleEmailChange}
-          />
+          {logged && user ? (
+            <InputAuth
+              type="email"
+              name="Email"
+              value={user.email}
+              required={true}
+              onChange={() => {}}
+            />
+          ) : (
+            <InputAuth
+              type="email"
+              name="Email"
+              value={email}
+              required={true}
+              onChange={handleEmailChange}
+            />
+          )}
           <InputAuth
             type="password"
             name="Nova Senha"
             value={newPassword}
             required={true}
             onChange={handleNewPasswordChange}
+          />
+          <InputAuth
+            type="password"
+            name="Confirme a Nova Senha"
+            value={newConfirmPassword}
+            required={true}
+            onChange={handleNewConfirmPasswordChange}
           />
         </div>
         <div className="mt-14 mb-7 w-full text-center">

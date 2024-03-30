@@ -4,6 +4,7 @@ import { api } from '../services/api';
 interface UserType {
   createdAt: string;
   email: string;
+  imageProfile: string;
   id: string;
   name: string;
   phone: string;
@@ -15,12 +16,23 @@ interface AuthContextType {
   user: UserType | null;
   logged: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
+  updateInfoUser: (data: dataUpdateInfoUserType) => void;
+}
+
+interface dataUpdateInfoUserType {
+  id: string;
+  name?: string;
+  phone?: string;
+  imageProfile?: string;
 }
 
 const defaultValueContext: AuthContextType = {
   user: null,
   logged: false,
   login: async () => {},
+  signOut: () => {},
+  updateInfoUser: () => {},
 };
 
 export const AuthContext = createContext<AuthContextType>(defaultValueContext);
@@ -46,6 +58,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     loadingStorageData();
   }, []);
+
+  const updateInfoUser = (data: dataUpdateInfoUserType) => {
+    return data;
+  };
+
+  const signOut = () => {
+    localStorage.clear();
+    setUser(null);
+    setLogged(false);
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -73,7 +95,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logged: !!logged, login }}>
+    <AuthContext.Provider
+      value={{ user, logged: !!logged, login, signOut, updateInfoUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
