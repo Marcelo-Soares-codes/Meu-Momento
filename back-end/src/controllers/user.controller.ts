@@ -42,9 +42,7 @@ export const login = async (req: Request, res: Response) => {
     const { password: _, ...userLogin } = user;
 
     // Generate JWT token
-    const token = jwt.sign({ data: userLogin }, process.env.JWT_PASS ?? "", {
-      expiresIn: "8h",
-    });
+    const token = jwt.sign({ data: user.id }, process.env.JWT_PASS ?? "");
 
     // Respond with success and send user data and JWT token
     res.status(200).json({ success: true, data: { user: userLogin, token } });
@@ -280,6 +278,7 @@ export const getId = async (req: Request, res: Response) => {
 export const updateInfoUser = async (req: Request, res: Response) => {
   try {
     const { id, name: newName, ...restData } = req.body;
+    console.log(restData);
 
     // Obter o usuário existente pelo ID
     const currentUser = await getById(id);

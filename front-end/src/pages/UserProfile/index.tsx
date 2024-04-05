@@ -1,43 +1,42 @@
 import { useContext, useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
+import ImageCompressor from 'image-compressor.js';
+import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+
 import { AuthContext } from '../../context/auth';
 import { Header } from '../../components/Header';
 import PopupError from '../../components/PopupError';
 import Loading from '../../components/Loading';
+import PopupSuccess from '../../components/PopupSuccess';
 
 const UserProfile = () => {
   const navigate = useNavigate();
-  const { user, logged, signOut } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
-  const [userImage, setUserImage] = useState(
-    user?.imageProfile || '/assets/default-image-profile.jpg',
-  );
+  const { user, signOut, updateInfoUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [userImage, setUserImage] = useState(user?.profileImage || null);
   const [name, setName] = useState(user?.name ?? '');
   const [nameEditMode, setNameEditMode] = useState(false);
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [phoneEditMode, setPhoneEditMode] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errors, setErrors] = useState<{ message: string; id: number }[]>([]);
+  const [success, setSuccess] = useState<{ message: string; id: number }[]>([]);
 
   const handleCloseError = (id: number) => {
     setErrors(errors.filter((error) => error.id !== id));
   };
 
-  useEffect(() => {
-    // Verificar se o usuário não está logado e redirecionar para a página inicial
-    if (!logged) {
-      navigate('/');
-    } else {
-      setLoading(false); // Definir loading como false após a verificação de login
-    }
-  }, [logged, navigate]);
+  const handleCloseSuccess = (id: number) => {
+    setSuccess(success.filter((item) => item.id !== id));
+  };
 
   useEffect(() => {
     if (
       (userImage != '' &&
-        userImage != user?.imageProfile &&
+        userImage != user?.profileImage &&
         userImage != '/assets/default-image-profile.jpg') ||
       (name != user?.name && name != '') ||
       phone != user?.phone
@@ -46,24 +45,78 @@ const UserProfile = () => {
     } else {
       setButtonDisabled(true);
     }
-  }, [userImage, name]);
+  }, [userImage, name, phone]);
 
   // Definir tipo para o evento
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (!file) return; // Verificar se o arquivo foi selecionado
-    const reader = new FileReader();
 
-    reader.onloadend = () => {
-      // Atualiza o estado com a imagem em base64
-      setUserImage(reader.result as string);
-    };
+    try {
+      const compressedImage = await new ImageCompressor().compress(file, {
+        maxWidth: 500, // Definir uma largura máxima para a imagem
+        maxHeight: 500, // Definir uma altura máxima para a imagem
+        quality: 0.6, // Definir a qualidade da imagem (entre 0 e 1)
+        mimeType: 'image/jpeg', // Tipo de imagem de saída
+      });
 
-    reader.readAsDataURL(file); // Ler o arquivo como base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Atualiza o estado com a imagem em base64
+        setUserImage(reader.result as string);
+      };
+
+      reader.readAsDataURL(compressedImage); // Ler o arquivo comprimido como base64
+    } catch (error) {
+      console.error('Erro ao comprimir a imagem:', error);
+    }
   };
+
+  const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newPhone = event.target.value;
+    setPhone(newPhone);
+
+    if (
+      (userImage != '' &&
+        userImage != user?.profileImage &&
+        userImage != '/assets/default-image-profile.jpg') ||
+      (name != user?.name && name != '') ||
+      newPhone != user?.phone
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  };
+
   const handleSave = () => {
-    console.log(user);
-    console.log({ name, userImage, phone });
+    setLoading(true);
+    const data = { id: user?.id ?? '', name, profileImage: userImage, phone };
+    const token = Cookies.get('@Auth:token') || '';
+    if (!token) {
+      setLoading(false);
+      navigate('/login');
+    }
+
+    try {
+      updateInfoUser(data, token);
+      setSuccess([
+        ...success,
+        {
+          message: 'Usuário atualizado com sucesso!',
+          id: new Date().getTime(),
+        },
+      ]);
+      setButtonDisabled(true);
+    } catch (error: any) {
+      setLoading(false);
+      console.error(error);
+      setErrors([
+        ...errors,
+        { message: error.message, id: new Date().getTime() },
+      ]);
+    }
+    setLoading(false);
   };
 
   const toggleNameEditMode = () => {
@@ -73,7 +126,6 @@ const UserProfile = () => {
   const togglePhoneEditMode = () => {
     setPhoneEditMode((prevMode) => !prevMode);
   };
-
   return (
     <main className="flex flex-col h-screen">
       {loading ? (
@@ -97,7 +149,11 @@ const UserProfile = () => {
                     className="cursor-pointer"
                   />
                   <img
-                    src={userImage}
+                    src={
+                      userImage
+                        ? userImage
+                        : '/assets/default-image-profile.jpg'
+                    }
                     alt="profile"
                     className="w-32 rounded-full mx-auto"
                   />
@@ -127,15 +183,17 @@ const UserProfile = () => {
               <div className="w-full mt-7 border-b-2 border-solid border-gray flex justify-center items-center">
                 <h2 className="font-sans text-base mx-auto">{user?.email}</h2>
               </div>
-              <div className="mt-5">
+              <div className="flex mt-5">
                 {phoneEditMode ? (
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={handlePhoneChange}
                     onBlur={togglePhoneEditMode}
                     autoFocus
-                    className="font-sans text-base ml-auto"
+                    className="font-sans text-base mx-auto mb-0.5"
                   />
                 ) : (
                   <>
@@ -150,6 +208,7 @@ const UserProfile = () => {
                   </>
                 )}
               </div>
+
               <div className="mt-7 md:mt-10 text-center">
                 <Link
                   to={'/recover-password'}
@@ -186,12 +245,23 @@ const UserProfile = () => {
             </div>
           </div>
           {errors.length > 0 && (
-            <div className="flex flex-col items-center fixed top-16 right-10 z-50">
+            <div className="flex flex-col items-center fixed top-16 right-5 md:right-10 z-50">
               {errors.map(({ message, id }) => (
                 <PopupError
                   key={id}
                   error={message}
                   onClose={() => handleCloseError(id)}
+                />
+              ))}
+            </div>
+          )}
+          {success.length > 0 && (
+            <div className="flex flex-col items-center fixed top-24 right-5 md:right-10 z-50">
+              {success.map(({ message, id }) => (
+                <PopupSuccess
+                  key={id}
+                  success={message}
+                  onClose={() => handleCloseSuccess(id)}
                 />
               ))}
             </div>

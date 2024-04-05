@@ -1,10 +1,11 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { api } from '../services/api';
+import Cookies from 'js-cookie'; // Importe a biblioteca js-cookie
 
 interface UserType {
   createdAt: string;
   email: string;
-  imageProfile: string;
+  profileImage: string;
   id: string;
   name: string;
   phone: string;
@@ -12,12 +13,12 @@ interface UserType {
   updatedAt: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: UserType | null;
   logged: boolean;
   login: (email: string, password: string) => Promise<void>;
   signOut: () => void;
-  updateInfoUser: (data: dataUpdateInfoUserType) => void;
+  updateInfoUser: (data: dataUpdateInfoUserType, token: string) => void;
 }
 
 interface dataUpdateInfoUserType {
@@ -47,10 +48,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const loadingStorageData = async () => {
+      // Verifique se o token está presente nos cookies
+      const cookieToken = Cookies.get('@Auth:token');
       const storageUser = localStorage.getItem('@Auth:user');
-      const storageToken = localStorage.getItem('@Auth:token');
 
-      if (storageUser && storageToken) {
+      if (cookieToken && storageUser) {
         setUser(JSON.parse(storageUser));
         setLogged(true);
       }
@@ -59,12 +61,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loadingStorageData();
   }, []);
 
-  const updateInfoUser = (data: dataUpdateInfoUserType) => {
-    return data;
+  const updateInfoUser = async (
+    data: dataUpdateInfoUserType,
+    token: string,
+  ) => {
+    try {
+      const response = await api.post('/user/update-info', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.data.success) {
+        throw response.data.error;
+      }
+
+      const user = response.data.data;
+
+      localStorage.setItem('@Auth:user', JSON.stringify(user));
+      setUser(user);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const signOut = () => {
-    localStorage.clear();
+    // Limpe tanto o cookie quanto o armazenamento local
+    Cookies.remove('@Auth:token');
+    localStorage.removeItem('@Auth:user');
     setUser(null);
     setLogged(false);
   };
@@ -75,13 +99,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (response.data.success) {
         const { token } = response.data.data;
+        console.log(token);
 
         setUser(response.data.data.user);
         setLogged(true);
 
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-        localStorage.setItem('@Auth:token', token);
+        // Salve o token nos cookies
+        Cookies.set('@Auth:token', token);
         localStorage.setItem(
           '@Auth:user',
           JSON.stringify(response.data.data.user),

@@ -21,8 +21,7 @@ const userRoutes = (app: Express) => {
   app.post("/user/login", login);
   app.post("/user/recover-password", recoverPassword);
   app.post("/user/confirm-recover-password", confirmRecoverPassword);
-
-  app.put("/user/update-info", authenticateToken, updateInfoUser);
+  app.post("/user/update-info", authenticateToken, updateInfoUser);
 
   app.get("/users", getAll);
   app.get("/user/:id", authenticateToken, isAdmin, getId);
