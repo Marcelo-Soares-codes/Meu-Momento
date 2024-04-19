@@ -1,13 +1,16 @@
 import { ArenaDTO, VideoDTO } from "../DTOs/arena.dto";
 import { prisma } from "../services/prisma";
+import { Prisma } from "@prisma/client";
 
-export const createArena = async (data: ArenaDTO) => {
-  const arena = prisma.arena.create({
+export const createArena = async (data: Prisma.ArenaCreateInput) => {
+  const arena = await prisma.arena.create({
     data,
     select: {
       id: true,
       name: true,
       email: true,
+      phone: true,
+      localization: true,
       password: false,
       createdAt: true,
       updatedAt: true,
@@ -22,7 +25,11 @@ export const getAllArenas = async () => {
       id: true,
       name: true,
       email: true,
+      phone: true,
+      localization: true,
       password: false,
+      profileImage: true,
+      profileBackgroundImage: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -37,7 +44,11 @@ export const getById = async (id: string) => {
       id: true,
       name: true,
       email: true,
+      phone: true,
+      localization: true,
       password: false,
+      profileImage: true,
+      profileBackgroundImage: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -52,7 +63,11 @@ export const getByEmail = async (email: string) => {
       id: true,
       name: true,
       email: true,
+      phone: true,
+      localization: true,
       password: true,
+      profileImage: true,
+      profileBackgroundImage: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -67,7 +82,11 @@ export const getByName = async (name: string) => {
       id: true,
       name: true,
       email: true,
-      password: true,
+      phone: true,
+      localization: true,
+      password: false,
+      profileImage: true,
+      profileBackgroundImage: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -98,6 +117,19 @@ export const addVideoToArena = async (arenaId: string, videoData: VideoDTO) => {
   });
 
   return video;
+};
+
+export const getAllVideos = async (arenaId: string) => {
+  const videos = await prisma.video.findMany({
+    where: { arenaId },
+    select: {
+      id: true,
+      title: true,
+      file: true,
+      createdAt: true,
+    },
+  });
+  return videos;
 };
 
 export const deleteById = async (id: string) => {

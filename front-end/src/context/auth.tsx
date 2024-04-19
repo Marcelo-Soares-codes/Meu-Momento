@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { api } from '../services/api';
-import Cookies from 'js-cookie'; // Importe a biblioteca js-cookie
+import Cookies from 'js-cookie';
 
 interface UserType {
   createdAt: string;
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (response.data.success) {
         const { token } = response.data.data;
-        console.log(token);
 
         setUser(response.data.data.user);
         setLogged(true);
@@ -107,7 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         // Salve o token nos cookies
-        Cookies.set('@Auth:token', token);
+        Cookies.set('@Auth:token', token, { expires: 7 });
         localStorage.setItem(
           '@Auth:user',
           JSON.stringify(response.data.data.user),

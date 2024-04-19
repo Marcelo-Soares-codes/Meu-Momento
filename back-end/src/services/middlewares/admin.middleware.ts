@@ -7,12 +7,12 @@ export const isAdmin = async (
   next: NextFunction
 ) => {
   // Verifica se o usuário está presente na solicitação e se ele tem a propriedade 'id' definida
-  if (!req.user || !req.user.id) {
+  if (!req.id) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
   // Verifica se o ID do usuário corresponde ao ID do administrador (substitua 'adminId' pelo ID real do administrador)
-  const user = await getById(req.user.id);
+  const user = await getById(req.id);
 
   // Verifica se o usuário foi encontrado
   if (!user) {

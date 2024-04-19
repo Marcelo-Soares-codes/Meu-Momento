@@ -7,6 +7,7 @@ import {
   createArena,
   deleteById,
   getAllArenas,
+  getAllVideos,
   getByEmail,
   getById,
   getByName,
@@ -34,9 +35,7 @@ export const login = async (req: Request, res: Response) => {
     const { password: _, ...arenaLogin } = arena;
 
     // Generate JWT token
-    const token = jwt.sign({ data: arenaLogin }, process.env.JWT_PASS ?? "", {
-      expiresIn: "8h",
-    });
+    const token = jwt.sign({ id: arena.id }, process.env.JWT_PASS ?? "", {});
 
     // Respond with success and send arena data and JWT token
     res.status(200).json({ success: true, data: { arena: arenaLogin, token } });
@@ -109,21 +108,53 @@ export const getId = async (req: Request, res: Response) => {
 
 export const addVideo = async (req: Request, res: Response) => {
   try {
-    const { title, arenaId } = req.body;
-    const videoBytes = req.file?.buffer;
+    // Verifica se 'title' e 'id' estão presentes no corpo da requisição
+    const { title, id } = req.body;
+    if (!title) {
+      throw new Error("Title are missing in request body");
+    }
+    if (!id) {
+      throw new Error("Id are missing in request body");
+    }
 
+    // Verifica se o arquivo de vídeo está presente
+    const videoBytes = req.file?.buffer;
     if (!videoBytes) {
       throw new Error("Video file not found");
     }
 
+    // Lógica para adicionar o vídeo à arena
     const newVideo = { title, file: videoBytes };
+    addVideoToArena(id, newVideo);
 
-    addVideoToArena(arenaId, newVideo);
-
-    // Return success and new video data
+    // Retorna sucesso e os dados do novo vídeo
     res.status(201).json({ success: true, data: newVideo });
   } catch (error) {
+    // Lida com erros de forma mais detalhada
     handleError(error, res, "Error adding video to arena");
+  }
+};
+
+export const getVideosByArenaId = async (req: Request, res: Response) => {
+  try {
+    const arenaId = req.params.id; // Obtém o ID da arena a partir dos parâmetros da requisição
+
+    // Verifica se a arena existe
+    const arena = await getById(arenaId);
+    if (!arena) {
+      // Se a arena não for encontrada, retorna uma resposta com status 404
+      res.status(404).json({ success: false, error: "Arena not found" });
+      return;
+    }
+
+    // Obtém todos os vídeos da arena pelo seu ID
+    const videos = await getAllVideos(arenaId);
+
+    // Retorna uma resposta com os vídeos obtidos
+    res.status(200).json({ success: true, data: videos });
+  } catch (error) {
+    // Em caso de erro, trata o erro e retorna uma resposta com status 500
+    handleError(error, res, "Error getting videos by arena ID");
   }
 };
 

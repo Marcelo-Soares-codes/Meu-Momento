@@ -42,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
     const { password: _, ...userLogin } = user;
 
     // Generate JWT token
-    const token = jwt.sign({ data: user.id }, process.env.JWT_PASS ?? "");
+    const token = jwt.sign({ id: user.id }, process.env.JWT_PASS ?? "");
 
     // Respond with success and send user data and JWT token
     res.status(200).json({ success: true, data: { user: userLogin, token } });

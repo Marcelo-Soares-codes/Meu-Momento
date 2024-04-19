@@ -10,6 +10,8 @@ import NotFound from '../pages/NotFound/index.tsx';
 import ConfirmRecoverPassword from '../pages/ConfirmRecoverPassword/index.tsx';
 import UserProfile from '../pages/UserProfile/index.tsx';
 import { PrivateRoute } from './privateRoute.tsx';
+import Arenas from '../pages/Arenas/index.tsx';
+import ArenaProfile from '../pages/ArenaProfile/index.tsx';
 
 const AppRoutes = () => {
   return (
@@ -33,6 +35,23 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/arenas"
+          element={
+            <PrivateRoute>
+              <Arenas />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/arena/:id"
+          element={
+            <PrivateRoute>
+              <ArenaProfile />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/video/:mainVideo"
           element={

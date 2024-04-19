@@ -30,21 +30,6 @@ export const Header = () => {
     setMenuButtonVisible(true);
   };
 
-  useEffect(() => {
-    // Verifica o tamanho da tela ao carregar a página
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setNavVisible(true);
-      }
-    };
-
-    // Adiciona o ouvinte de redimensionamento quando o componente é montado
-    window.addEventListener('resize', handleResize);
-
-    // Remove o ouvinte de redimensionamento quando o componente é desmontado
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <header
       className={`w-full h-32 sm:h-36 bg-green text-center flex flex-col ${logged ? 'grid grid-cols-3 sm:gap-4' : 'sm:flex-row'} justify-center items-center shadow-md drop-shadow-sm md:drop-shadow-xl shadow-greenDark`}

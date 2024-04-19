@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading/index';
 
 interface NavBarProps {
@@ -21,13 +21,14 @@ export const NavBar = ({ navVisible, setNavVisible }: NavBarProps) => {
         <Loading />
       ) : (
         <nav
-          className={`fixed top-0 left-0 right-10 w-full sm:w-2/3 md:w-2/3 lg:w-2/5 h-screen bg-white z-20 transition-all duration-500 ${
-            navVisible ? '' : '-left-full'
-          }`}
+          className={`fixed top-0 left-0 right-10 w-full sm:w-2/3 md:w-2/3 lg:w-2/5 h-screen bg-white z-50 shadow-xl drop-shadow-xl shadow-greenDark transition-all duration-500`}
+          style={{
+            transform: navVisible ? 'translateX(0)' : 'translateX(-110%)',
+          }}
         >
-          <div className="px-5 mt-14">
+          <div className="px-5 mt-24">
             <div
-              className="flex justify-center items-center text-center"
+              className="flex justify-center items-center text-center py-2 cursor-pointer"
               onClick={() => {
                 setLoading(true);
                 if (navVisible) setNavVisible(false);
@@ -47,15 +48,36 @@ export const NavBar = ({ navVisible, setNavVisible }: NavBarProps) => {
               <h2 className="ml-4 text-xl">{user?.name}</h2>
             </div>
             <ul className="flex flex-col mt-20 ml-0 text-black space-y-7 text-xl">
-              <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
-                INICIO
-              </li>
-              <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
-                ARENAS
-              </li>
-              <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
-                PERFIL
-              </li>
+              <Link
+                to={'/'}
+                onClick={() => {
+                  setNavVisible(false);
+                }}
+              >
+                <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
+                  INICIO
+                </li>
+              </Link>
+              <Link
+                to={'/arenas'}
+                onClick={() => {
+                  setNavVisible(false);
+                }}
+              >
+                <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
+                  ARENAS
+                </li>
+              </Link>
+              <Link
+                to={'/user/profile'}
+                onClick={() => {
+                  setNavVisible(false);
+                }}
+              >
+                <li className="hover:text-white hover:bg-gray py-2 px-4 rounded-lg duration-300 cursor-pointer transition-all">
+                  PERFIL
+                </li>
+              </Link>
             </ul>
           </div>
           <FontAwesomeIcon
