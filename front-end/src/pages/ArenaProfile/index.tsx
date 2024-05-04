@@ -1,32 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEnvelope,
-  faMapMarkerAlt,
-  faPhone,
-} from '@fortawesome/free-solid-svg-icons';
 
 import { Header } from '../../components/Header';
 import { api } from '../../services/api';
 import Loading from '../../components/Loading';
-
-interface ArenaType {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  localization: string;
-  profileImage: string;
-  profileBackgroundImage: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ArenaType } from '../../DTOs/Arena.dto';
+import { getVideosList } from '../../utils/getVideoList';
+import { SectionContactArena } from '../../sections/SectionContactArena';
+import { SectionVideosArena } from '../../sections/SectionVideosArena';
 
 const ArenaProfile = () => {
   const { id } = useParams();
   const [arena, setArena] = useState<ArenaType | null>(null);
+  const [videos, setVideos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState('videos');
 
@@ -53,6 +40,16 @@ const ArenaProfile = () => {
 
     fetchArena();
   }, [id]);
+
+  useEffect(() => {
+    const fetchVideosList = async () => {
+      if (arena?.id) {
+        const videosList = await getVideosList(arena.id);
+        setVideos(videosList);
+      }
+    };
+    fetchVideosList();
+  }, [arena?.id]);
 
   if (loading || !arena) {
     return <Loading />;
@@ -122,43 +119,9 @@ const ArenaProfile = () => {
 
       <div className="mt-14">
         {selectedOption === 'videos' ? (
-          <section className="">
-            <h2>Videos</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Doloribus soluta commodi sunt adipisci saepe, id facere ea ut et
-              porro perferendis doloremque. Eaque in inventore ipsam molestiae
-              tempora, architecto incidunt!
-            </p>
-          </section>
+          <SectionVideosArena videos={videos} arenaId={arena.id} />
         ) : (
-          <section className="">
-            <h2 className="text-center text-2xl md:text-3xl">Contato</h2>
-
-            <div className="my-14 mx-4">
-              <h3 className="text-green md:text-lg">
-                <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-                Email:{' '}
-                <span className="font-sans font-bold text-black">
-                  {arena.email}
-                </span>
-              </h3>
-              <h3 className="my-5 text-green md:text-lg">
-                <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                Localização:{' '}
-                <span className="font-sans font-bold text-black">
-                  {arena.localization}
-                </span>
-              </h3>
-              <h3 className="text-green md:text-lg">
-                <FontAwesomeIcon icon={faPhone} className="mr-2" />
-                Tel:{' '}
-                <span className="font-sans font-bold text-black">
-                  {arena.phone}
-                </span>
-              </h3>
-            </div>
-          </section>
+          <SectionContactArena arena={arena} />
         )}
       </div>
     </main>

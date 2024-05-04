@@ -53,7 +53,7 @@ const AppRoutes = () => {
         />
 
         <Route
-          path="/video/:mainVideo"
+          path="/video/:arenaId/:mainVideo"
           element={
             <PrivateRoute>
               <VideoPage />

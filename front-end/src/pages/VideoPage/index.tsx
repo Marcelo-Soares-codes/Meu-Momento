@@ -4,14 +4,12 @@ import { Header } from '../../components/Header/index';
 import { useParams } from 'react-router-dom';
 
 const VideoPage = () => {
-  const { mainVideo } = useParams();
+  const { arenaId, mainVideo } = useParams();
 
   return (
     <main className="bg-grey">
       <Header />
-      <PlayVideo
-        mainVideo={mainVideo as string} /* Pass `mainVideo` as `videoId` prop */
-      />
+      <PlayVideo mainVideo={mainVideo as string} arenaId={arenaId || ''} />
     </main>
   );
 };

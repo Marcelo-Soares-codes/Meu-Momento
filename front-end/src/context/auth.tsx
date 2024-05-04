@@ -106,7 +106,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         // Salve o token nos cookies
-        Cookies.set('@Auth:token', token, { expires: 7 });
+        Cookies.set('@Auth:token', token, {
+          expires: 7,
+          sameSite: 'Lax',
+          secure: true,
+        });
+
         localStorage.setItem(
           '@Auth:user',
           JSON.stringify(response.data.data.user),

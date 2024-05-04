@@ -120,6 +120,10 @@ export const addVideoToArena = async (arenaId: string, videoData: VideoDTO) => {
 };
 
 export const getAllVideos = async (arenaId: string) => {
+  /*
+  Infelizmente não pude usar uma CDN boa para armazenar os videos por motivos de custo,
+  porem posso fazer uma demonstração do projeto usando os videos a seguir!
+
   const videos = await prisma.video.findMany({
     where: { arenaId },
     select: {
@@ -128,7 +132,19 @@ export const getAllVideos = async (arenaId: string) => {
       file: true,
       createdAt: true,
     },
-  });
+  });*/
+  const videos = [
+    "zVtcm1oSBZA",
+    "bXRfMxquuP8",
+    "OXn6LOc72Xw",
+    "kxHTxMWyX9I",
+    "RcmiIpqxORE",
+    "f9KeRWrZ4O4",
+    "em_aBSvxKng",
+    "yki3DgBOb98",
+    "3Vhe2oe-Oao",
+    "V5_jU1klw1U",
+  ];
   return videos;
 };
 
