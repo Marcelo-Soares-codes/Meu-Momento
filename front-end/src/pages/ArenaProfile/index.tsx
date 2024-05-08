@@ -70,7 +70,11 @@ const ArenaProfile = () => {
           <div className="bg-gray w-full h-72 bg-opacity-40"></div>
         )}
         <img
-          src={arena.profileImage}
+          src={
+            arena.profileImage != ''
+              ? arena.profileImage
+              : '/assets/default-image-profile.jpg'
+          }
           alt={arena.name}
           className="absolute -bottom-1/3 sm:-bottom-1/2 w-1/2 max-w-48 min-w-32 rounded-full border-4 border-solid border-white"
         />

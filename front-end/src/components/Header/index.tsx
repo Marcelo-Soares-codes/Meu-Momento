@@ -35,7 +35,7 @@ export const Header = () => {
       className={`w-full h-32 sm:h-36 bg-green text-center flex flex-col ${logged ? 'grid grid-cols-3 sm:gap-4' : 'sm:flex-row'} justify-center items-center shadow-md drop-shadow-sm md:drop-shadow-xl shadow-greenDark`}
     >
       {logged ? (
-        <div>
+        <div className="relative">
           <FontAwesomeIcon
             icon={faBars}
             className={` flex mx-5 text-3xl text-white transition-opacity duration-400 cursor-pointer ${menuButtonVisible ? 'opacity-100' : 'opacity-0'}`}

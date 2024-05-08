@@ -8,14 +8,16 @@ interface ArenaListProps {
 
 export const ArenaList = ({ id, src, name }: ArenaListProps) => {
   return (
-    <div className="max-w-52 mx-auto px-2 text-center cursor-pointer">
-      <Link to={`/arena/${id}`}>
+    <div className="max-w-52 mx-auto h-full px-2 cursor-pointer">
+      <Link to={`/arena/${id}`} className="flex flex-col h-full items-center">
         <img
           src={src}
           alt={name}
-          className="w-3/5 rounded-full mx-auto min-w-24"
+          className="w-3/5 rounded-full mx-auto mb-2 min-w-24"
         />
-        <h2 className="mt-2 text-lg font-sans font-bold">{name}</h2>
+        <h2 className="mt-auto text-lg text-center font-sans font-bold">
+          {name}
+        </h2>
       </Link>
     </div>
   );
