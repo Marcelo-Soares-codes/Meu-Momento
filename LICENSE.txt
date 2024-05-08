@@ -1,0 +1,25 @@
+Licença de Uso Não-Comercial - Versão 1.0
+
+Este é um contrato legal entre você e o(s) autor(es) deste projeto. Ao utilizar este projeto, você concorda com os termos e condições desta licença.
+
+Permissões:
+1. É concedida permissão para utilizar, copiar e distribuir este software para fins de estudo porem não-comerciais.
+2. É permitido modificar o software para atender às suas necessidades.
+
+Restrições:
+1. Este software não pode ser utilizado para fins comerciais, incluindo, mas não se limitando a, venda, licenciamento, aluguel ou qualquer outra forma de exploração comercial.
+2. Este software não pode ser incluído em produtos comerciais ou serviços sem autorização prévia por escrito dos autores.
+
+Isenções de Responsabilidade:
+O software é fornecido "no estado em que se encontra", sem garantia de qualquer tipo, expressa ou implícita. Os autores não serão responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais, exemplares ou consequenciais decorrentes do uso deste software.
+
+Rescisão:
+Esta licença será rescindida automaticamente se você violar qualquer uma das suas disposições. Após a rescisão, você deverá destruir imediatamente todas as cópias deste software em sua posse.
+
+Variações:
+Os autores deste projeto reservam o direito de alterar os termos desta licença a qualquer momento e sem aviso prévio.
+
+Aceitação:
+Ao utilizar este software, você indica que aceita os termos e condições desta licença.
+
+Para mais informações, entre em contato com os autores em marcelo.soares1070@gmail.com .
