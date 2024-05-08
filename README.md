@@ -1,6 +1,26 @@
 # Meu Momento
 
+## Sobre o Projeto
+
 Meu Momento é um aplicativo desenvolvido para gravar replays em quadra durante atividades esportivas, permitindo aos jogadores revisitar momentos específicos do jogo posteriormente. Este documento fornece uma visão geral do projeto, suas funcionalidades e as tecnologias utilizadas tanto no front-end quanto no back-end.
+
+### Tela Inicial
+
+![Tela Inicial](/assets/img-home.png/)
+
+Esta imagem mostra a tela inicial do aplicativo "Meu Momento", onde os usuários podem acessar diversas funcionalidades, como a visualização de vídeos gravados em quadra.
+
+### Página de Arenas
+
+![Página de Arenas](/assets//img-arenas.png)
+
+Nesta imagem, temos a página de arenas do aplicativo, onde os usuários podem escolher a arena que deseja ver os replay. A página exibe uma lista de arenas disponíveis com informações relevantes. (As arenas mostradas na imagem são apenas fictícias para a demonstração)
+
+### Lista de Vídeos
+
+![Lista de Vídeos](/assets/img-videos-list.png)
+
+Aqui vemos a lista de vídeos gravados pelos usuários. Cada item da lista representa um replay gravado no qual quando clicado redireciona para a pagina de visualização do videos.
 
 ## Funcionalidades
 
