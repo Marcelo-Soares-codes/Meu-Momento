@@ -1,5 +1,9 @@
 # Meu Momento
 
+## Acesse o aplicativo
+
+Você pode acessar o aplicativo [aqui](https://meu-momento.vercel.app/).
+
 ## Sobre o Projeto
 
 Meu Momento é um aplicativo desenvolvido para gravar replays em quadra durante atividades esportivas, permitindo aos jogadores revisitar momentos específicos do jogo posteriormente. Este documento fornece uma visão geral do projeto, suas funcionalidades e as tecnologias utilizadas tanto no front-end quanto no back-end.
